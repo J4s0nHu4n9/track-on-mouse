@@ -1,0 +1,52 @@
+﻿<Window x:Class="TrackOnMouse.ControlPanel.ControlPanel"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TrackOnMouse.ControlPanel"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        AllowsTransparency="True"
+        Background="Transparent"
+        WindowStyle="None"
+        ResizeMode="NoResize"
+        mc:Ignorable="d"
+        Title="ControlPanel"
+        Topmost="True"
+        d:DesignHeight="450" d:DesignWidth="800"
+        Height="100" Width="300"
+        d:DataContext="{d:DesignInstance local:ControlPanelViewModel}"
+        MouseDown="ControlPanel_OnMouseDown">
+    <Grid>
+        <materialDesign:Card Margin="8" 
+                             materialDesign:ShadowAssist.ShadowDepth="Depth2">
+            <Grid Margin="16">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <TextBlock VerticalAlignment="Center" 
+                           FontWeight="Black"
+                           Text="Circle Size"/>
+                <Slider VerticalAlignment="Center"
+                        Grid.Row="0" Grid.Column="1"
+                        Value="{Binding CircleSize}"
+                        Maximum="{Binding CircleSizeMax, Mode=OneTime}"/>
+
+                <TextBlock Grid.Row="1" Grid.Column="0"
+                           VerticalAlignment="Center"
+                           FontWeight="Black"
+                           Text="Circle Stroke"/>
+                <Slider Grid.Row="1" Grid.Column="1"
+                        VerticalAlignment="Center"
+                        Value="{Binding CircleStroke}"
+                        Maximum="{Binding CircleStrokeMax, Mode=OneTime}"/>
+            </Grid>
+        </materialDesign:Card>
+        
+    </Grid>
+</Window>
