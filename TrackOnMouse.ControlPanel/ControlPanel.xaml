@@ -1,10 +1,10 @@
 ﻿<Window x:Class="TrackOnMouse.ControlPanel.ControlPanel"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TrackOnMouse.ControlPanel"
-        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         AllowsTransparency="True"
         Background="Transparent"
@@ -58,28 +58,24 @@
                     </Button>
                 </DockPanel>
 
-
                 <TextBlock Grid.Row="1" Grid.Column="0"
-                           VerticalAlignment="Center" 
-                           FontWeight="Black"
+                           VerticalAlignment="Center"
                            Text="Circle Size"/>
                 <Slider VerticalAlignment="Center"
                         Grid.Row="1" Grid.Column="1"
                         Value="{Binding CircleSize}"
-                        Maximum="{Binding CircleSizeMax, Mode=OneTime}"
-                        ToolTip="{Binding CircleSize, Mode=OneWay}"
-                        IsSnapToTickEnabled="True"
+                        Maximum="{Binding CircleSizeMax}"
+                        ToolTip="{Binding CircleSize}"
                         TickFrequency="1"/>
 
                 <TextBlock Grid.Row="2" Grid.Column="0"
                            VerticalAlignment="Center"
-                           FontWeight="Black"
                            Text="Circle Stroke"/>
                 <Slider Grid.Row="2" Grid.Column="1"
                         VerticalAlignment="Center"
                         Value="{Binding CircleStroke}"
-                        Maximum="{Binding CircleStrokeMax, Mode=OneTime}"
-                        ToolTip="{Binding CircleStroke, Mode=OneWay}"
+                        Maximum="{Binding CircleStrokeMax}"
+                        ToolTip="{Binding CircleStroke}"
                         IsSnapToTickEnabled="True"
                         TickFrequency="1"/>
             </Grid>

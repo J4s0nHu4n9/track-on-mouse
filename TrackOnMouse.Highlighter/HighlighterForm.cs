@@ -9,7 +9,8 @@ namespace TrackOnMouse.Highlighter
 {
     public sealed partial class HighlighterForm : Form
     {
-        private int _circleSize = 100;
+        private int _circleSize;
+        private float _circleStroke;
 
         private Point CurrentMousePosition { get; set; }
 
@@ -23,13 +24,27 @@ namespace TrackOnMouse.Highlighter
             set
             {
                 _circleSize = value;
-
-                Width = (int)(_circleSize * 1.5);
-                Height = (int)(_circleSize * 1.5);
+                UpdateFormSize();
             }
         }
 
-        public float CircleThickness { get; set; } = 15;
+        public float CircleStroke
+        {
+            get => _circleStroke;
+            set
+            {
+                if (value > _circleSize)
+                {
+                    _circleStroke = _circleSize;
+                }
+                else
+                {
+                    _circleStroke = value;
+                }
+
+                UpdateFormSize();
+            }
+        }
 
         public double CircleOpacity { get; set; } = 0.7;
 
@@ -41,8 +56,8 @@ namespace TrackOnMouse.Highlighter
 
                 createParams.ExStyle |= 0x80000;    //  WS_EX_LAYERED
                 createParams.ExStyle |= 0x20;       //  WS_EX_TRANSPARENT
-                createParams.Style |= (int)ControlStyles.DoubleBuffer;
-                createParams.Style |= (int)ControlStyles.OptimizedDoubleBuffer;
+                createParams.Style |= (int) ControlStyles.DoubleBuffer;
+                createParams.Style |= (int) ControlStyles.OptimizedDoubleBuffer;
 
                 return createParams;
             }
@@ -76,6 +91,11 @@ namespace TrackOnMouse.Highlighter
             PaintCircle();
         }
 
+        private void UpdateFormSize()
+        {
+            Width = Height = (int) (CircleSize + CircleStroke) + 5;
+        }
+
         private void PaintCircle()
         {
             using Bitmap bitmap = new Bitmap(Width, Height, PixelFormat.Format32bppPArgb);
@@ -84,7 +104,7 @@ namespace TrackOnMouse.Highlighter
             g.SmoothingMode = SmoothingMode.AntiAlias;
             g.DrawEllipse(
                 new Pen(new SolidBrush(Color.FromArgb((int) (byte.MaxValue * CircleOpacity), Color.Yellow)),
-                    CircleThickness),
+                    CircleStroke),
                 new Rectangle(
                     WindowCenter.X - CurrentCircleSize.Width / 2, WindowCenter.Y - CurrentCircleSize.Height / 2,
                     CurrentCircleSize.Width, CurrentCircleSize.Height));

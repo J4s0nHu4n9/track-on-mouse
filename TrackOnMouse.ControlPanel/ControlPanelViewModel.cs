@@ -18,6 +18,7 @@ namespace TrackOnMouse.ControlPanel
             set 
             {
                 SetProperty(ref _circleSize, value);
+                RaisePropertyChanged(nameof(CircleStrokeMax));
                 _highlighter.CircleSize = (int) _circleSize;
             }
         }
@@ -30,11 +31,22 @@ namespace TrackOnMouse.ControlPanel
             set
             {
                 SetProperty(ref _circleStroke, value);
-                _highlighter.CircleThickness = _circleStroke;
+                _highlighter.CircleStroke = _circleStroke;
             }
         }
 
-        public float CircleStrokeMax => CircleSizeMax / 2;
+        public float CircleStrokeMax
+        {
+            get
+            {
+                if (_circleStroke > CircleSize)
+                {
+                    CircleStroke = CircleSize;
+                }
+
+                return CircleSize;
+            }
+        }
 
         public ICommand CloseCommand { get; }
 
@@ -46,6 +58,8 @@ namespace TrackOnMouse.ControlPanel
             MinimizeCommand = new DelegateCommand(() => Minimize?.Invoke());
 
             _highlighter.Show();
+            _highlighter.CircleSize = (int)_circleSize;
+            _highlighter.CircleStroke = _circleStroke;
         }
 
         public event Action Close;
