@@ -14,7 +14,7 @@
         Title="ControlPanel"
         Topmost="True"
         d:DesignHeight="450" d:DesignWidth="800"
-        Height="100" Width="300"
+        Height="160" Width="300"
         d:DataContext="{d:DesignInstance local:ControlPanelViewModel}"
         MouseDown="ControlPanel_OnMouseDown">
     <Grid>
@@ -28,23 +28,60 @@
                 <Grid.RowDefinitions>
                     <RowDefinition />
                     <RowDefinition />
+                    <RowDefinition />
                 </Grid.RowDefinitions>
-                <TextBlock VerticalAlignment="Center" 
+
+                <TextBlock Grid.ColumnSpan="2" 
+                           Text="Control Panel" 
+                           Style="{StaticResource MaterialDesignHeadline6TextBlock}"
+                           VerticalAlignment="Center"/>
+                <DockPanel Grid.Column="1" Grid.Row="0"
+                           LastChildFill="False">
+                    <Button DockPanel.Dock="Right"
+                            Margin="4 0 0 0"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            Style="{StaticResource MaterialDesignIconButton}"
+                            Width="20" Height="20"
+                            Command="{Binding CloseCommand}">
+                        <materialDesign:PackIcon Kind="WindowClose"
+                                                 Width="16" Height="16"/>
+                    </Button>
+                    <Button DockPanel.Dock="Right"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            Style="{StaticResource MaterialDesignIconButton}"
+                            Width="20" Height="20"
+                            Command="{Binding MinimizeCommand}">
+                        <materialDesign:PackIcon Kind="Minus"
+                                                 Width="16" Height="16"/>
+                    </Button>
+                </DockPanel>
+
+
+                <TextBlock Grid.Row="1" Grid.Column="0"
+                           VerticalAlignment="Center" 
                            FontWeight="Black"
                            Text="Circle Size"/>
                 <Slider VerticalAlignment="Center"
-                        Grid.Row="0" Grid.Column="1"
+                        Grid.Row="1" Grid.Column="1"
                         Value="{Binding CircleSize}"
-                        Maximum="{Binding CircleSizeMax, Mode=OneTime}"/>
+                        Maximum="{Binding CircleSizeMax, Mode=OneTime}"
+                        ToolTip="{Binding CircleSize, Mode=OneWay}"
+                        IsSnapToTickEnabled="True"
+                        TickFrequency="1"/>
 
-                <TextBlock Grid.Row="1" Grid.Column="0"
+                <TextBlock Grid.Row="2" Grid.Column="0"
                            VerticalAlignment="Center"
                            FontWeight="Black"
                            Text="Circle Stroke"/>
-                <Slider Grid.Row="1" Grid.Column="1"
+                <Slider Grid.Row="2" Grid.Column="1"
                         VerticalAlignment="Center"
                         Value="{Binding CircleStroke}"
-                        Maximum="{Binding CircleStrokeMax, Mode=OneTime}"/>
+                        Maximum="{Binding CircleStrokeMax, Mode=OneTime}"
+                        ToolTip="{Binding CircleStroke, Mode=OneWay}"
+                        IsSnapToTickEnabled="True"
+                        TickFrequency="1"/>
             </Grid>
         </materialDesign:Card>
         

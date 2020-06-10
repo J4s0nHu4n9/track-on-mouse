@@ -1,4 +1,7 @@
-﻿using Prism.Mvvm;
+﻿using System;
+using System.Windows.Input;
+using Prism.Commands;
+using Prism.Mvvm;
 using TrackOnMouse.Highlighter;
 
 namespace TrackOnMouse.ControlPanel
@@ -33,9 +36,19 @@ namespace TrackOnMouse.ControlPanel
 
         public float CircleStrokeMax => CircleSizeMax / 2;
 
+        public ICommand CloseCommand { get; }
+
+        public ICommand MinimizeCommand { get; }
+
         public ControlPanelViewModel()
         {
+            CloseCommand = new DelegateCommand(() => Close?.Invoke());
+            MinimizeCommand = new DelegateCommand(() => Minimize?.Invoke());
+
             _highlighter.Show();
         }
+
+        public event Action Close;
+        public event Action Minimize;
     }
 }

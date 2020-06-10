@@ -1,18 +1,24 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 
-  <PropertyGroup>
-    <OutputType>WinExe</OutputType>
-    <TargetFramework>netcoreapp5.0</TargetFramework>
-    <UseWPF>true</UseWPF>
-  </PropertyGroup>
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>netcoreapp5.0</TargetFramework>
+		<UseWPF>true</UseWPF>
+		<ApplicationIcon>icon.ico</ApplicationIcon>
+		<Platforms>AnyCPU;x64;x86</Platforms>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="MaterialDesignThemes" Version="3.2.0-ci1494" />
-    <PackageReference Include="Prism.Wpf" Version="8.0.0.1740-pre" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="MaterialDesignThemes" Version="3.2.0-ci1494" />
+		<PackageReference Include="Prism.Wpf" Version="8.0.0.1740-pre" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\TrackOnMouse.Highlighter\TrackOnMouse.Highlighter.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\TrackOnMouse.Highlighter\TrackOnMouse.Highlighter.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Folder Include="Properties\" />
+	</ItemGroup>
 
 </Project>
