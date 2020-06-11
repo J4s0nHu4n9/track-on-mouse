@@ -9,44 +9,45 @@ namespace TrackOnMouse.Highlighter
 {
     public sealed partial class HighlighterForm : Form
     {
-        private int _circleSize;
-        private float _circleStroke;
+        private int _shapeSize;
+        private float _shapeStroke;
 
         private Point CurrentMousePosition { get; set; }
-
         private Point WindowCenter => new Point(Width / 2, Height / 2);
 
-        private Size CurrentCircleSize => new Size(CircleSize, CircleSize);
+        private Size CurrentShapeSize => new Size(ShapeSize, ShapeSize);
 
-        public int CircleSize
+        public int ShapeSize
         {
-            get => _circleSize;
+            get => _shapeSize;
             set
             {
-                _circleSize = value;
+                _shapeSize = value;
                 UpdateFormSize();
             }
         }
 
-        public float CircleStroke
+        public float ShapeStroke
         {
-            get => _circleStroke;
+            get => _shapeStroke;
             set
             {
-                if (value > _circleSize)
+                if (value > _shapeSize)
                 {
-                    _circleStroke = _circleSize;
+                    _shapeStroke = _shapeSize;
                 }
                 else
                 {
-                    _circleStroke = value;
+                    _shapeStroke = value;
                 }
 
                 UpdateFormSize();
             }
         }
 
-        public double CircleOpacity { get; set; } = 0.7;
+        public double ShapeOpacity { get; set; } = 0.7;
+
+        public Color ShapeColor { get; set; } = Color.Yellow;
 
         protected override CreateParams CreateParams
         {
@@ -93,7 +94,7 @@ namespace TrackOnMouse.Highlighter
 
         private void UpdateFormSize()
         {
-            Width = Height = (int) (CircleSize + CircleStroke) + 5;
+            Width = Height = (int) (ShapeSize + ShapeStroke) + 5;
         }
 
         private void PaintCircle()
@@ -103,11 +104,11 @@ namespace TrackOnMouse.Highlighter
 
             g.SmoothingMode = SmoothingMode.AntiAlias;
             g.DrawEllipse(
-                new Pen(new SolidBrush(Color.FromArgb((int) (byte.MaxValue * CircleOpacity), Color.Yellow)),
-                    CircleStroke),
+                new Pen(new SolidBrush(Color.FromArgb((int) (byte.MaxValue * ShapeOpacity), ShapeColor)),
+                    ShapeStroke),
                 new Rectangle(
-                    WindowCenter.X - CurrentCircleSize.Width / 2, WindowCenter.Y - CurrentCircleSize.Height / 2,
-                    CurrentCircleSize.Width, CurrentCircleSize.Height));
+                    WindowCenter.X - CurrentShapeSize.Width / 2, WindowCenter.Y - CurrentShapeSize.Height / 2,
+                    CurrentShapeSize.Width, CurrentShapeSize.Height));
 
 
             IntPtr screenDc = Win32.GetDC(IntPtr.Zero);

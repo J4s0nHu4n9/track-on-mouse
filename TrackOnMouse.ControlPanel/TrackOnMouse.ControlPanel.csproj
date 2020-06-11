@@ -6,6 +6,7 @@
 		<UseWPF>true</UseWPF>
 		<ApplicationIcon>icon.ico</ApplicationIcon>
 		<Platforms>AnyCPU;x64;x86</Platforms>
+		<NoWin32Manifest>true</NoWin32Manifest>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -13,12 +14,29 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Folder Include="Properties\" />
+	  <PackageReference Include="MaterialDesignThemes" Version="3.2.0-ci1494" />
+	  <PackageReference Include="Prism.Wpf" Version="8.0.0.1740-pre" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="MaterialDesignThemes" Version="3.2.0-ci1494" />
-	  <PackageReference Include="Prism.Wpf" Version="8.0.0.1740-pre" />
+	  <Compile Update="Properties\Resources.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>Resources.resx</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <EmbeddedResource Update="Properties\Resources.resx">
+	    <Generator>ResXFileCodeGenerator</Generator>
+	    <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Update="icon.ico">
+	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+	  </None>
 	</ItemGroup>
 
 </Project>

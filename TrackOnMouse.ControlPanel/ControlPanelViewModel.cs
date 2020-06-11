@@ -8,48 +8,72 @@ namespace TrackOnMouse.ControlPanel
 {
     public class ControlPanelViewModel : BindableBase
     {
-        private readonly HighlighterForm _highlighter = new HighlighterForm();
-        private float _circleSize = 100;
-        private float _circleStroke = 15;
+        private readonly HighlighterForm _highlighter;
+        private float _shapeSize = 100;
+        private float _shapeStroke = 15;
+        private float _shapeOpacityPercentage = 70;
 
-        public float CircleSize
+        public static float ShapeSizeMax => 500;
+        public static float ShapeOpacityMax => 100;
+        public float ShapeStrokeMax => ShapeSize;
+
+        public float ShapeSize
         {
-            get => _circleSize;
-            set 
-            {
-                SetProperty(ref _circleSize, value);
-                RaisePropertyChanged(nameof(CircleStrokeMax));
-                _highlighter.CircleSize = (int) _circleSize;
-            }
-        }
-
-        public float CircleSizeMax { get; } = 500;
-
-        public float CircleStroke
-        {
-            get => _circleStroke;
+            get => _shapeSize;
             set
             {
-                SetProperty(ref _circleStroke, value);
-                _highlighter.CircleStroke = _circleStroke;
+                if (value < 0) return;
+                if (value > ShapeSizeMax)
+                {
+                    value = ShapeSizeMax;
+                }
+
+                SetProperty(ref _shapeSize, value);
+                
+                if (ShapeStroke > _shapeSize)
+                {
+                    ShapeStroke = _shapeSize;
+                }
+
+                RaisePropertyChanged(nameof(ShapeStrokeMax));
+
+                _highlighter.ShapeSize = (int) _shapeSize;
             }
         }
 
-        public float CircleStrokeMax
+        public float ShapeStroke
         {
-            get
+            get => _shapeStroke;
+            set
             {
-                if (_circleStroke > CircleSize)
+                if (value < 0) return;
+                if (value > ShapeStrokeMax)
                 {
-                    CircleStroke = CircleSize;
+                    value = ShapeStrokeMax;
+                }
+                
+                SetProperty(ref _shapeStroke, value);
+                _highlighter.ShapeStroke = _shapeStroke;
+            }
+        }
+
+        public float ShapeOpacityPercentage
+        {
+            get => _shapeOpacityPercentage;
+            set
+            {
+                if (value < 0) return;
+                if (value > ShapeOpacityMax)
+                {
+                    value = ShapeOpacityMax;
                 }
 
-                return CircleSize;
+                SetProperty(ref _shapeOpacityPercentage, value);
+                _highlighter.ShapeOpacity = _shapeOpacityPercentage / 100f;
             }
         }
 
         public ICommand CloseCommand { get; }
-
         public ICommand MinimizeCommand { get; }
 
         public ControlPanelViewModel()
@@ -57,9 +81,14 @@ namespace TrackOnMouse.ControlPanel
             CloseCommand = new DelegateCommand(() => Close?.Invoke());
             MinimizeCommand = new DelegateCommand(() => Minimize?.Invoke());
 
+            _highlighter = new HighlighterForm
+            {
+                ShapeSize = (int) _shapeSize, 
+                ShapeStroke = _shapeStroke,
+                ShapeOpacity = _shapeOpacityPercentage / 100f
+            };
+
             _highlighter.Show();
-            _highlighter.CircleSize = (int)_circleSize;
-            _highlighter.CircleStroke = _circleStroke;
         }
 
         public event Action Close;

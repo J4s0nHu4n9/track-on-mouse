@@ -22,20 +22,22 @@
                              materialDesign:ShadowAssist.ShadowDepth="Depth2">
             <Grid Margin="16">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition />
+                    <ColumnDefinition Width="2.25*" />
+                    <ColumnDefinition Width="3*" />
+                    <ColumnDefinition Width="1*" />
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition />
                     <RowDefinition />
                     <RowDefinition />
+                    <RowDefinition />
                 </Grid.RowDefinitions>
 
-                <TextBlock Grid.ColumnSpan="2" 
+                <TextBlock Grid.ColumnSpan="3" 
                            Text="Control Panel" 
                            Style="{StaticResource MaterialDesignHeadline6TextBlock}"
                            VerticalAlignment="Center"/>
-                <DockPanel Grid.Column="1" Grid.Row="0"
+                <DockPanel Grid.Column="2" Grid.Row="0"
                            LastChildFill="False">
                     <Button DockPanel.Dock="Right"
                             Margin="4 0 0 0"
@@ -60,24 +62,51 @@
 
                 <TextBlock Grid.Row="1" Grid.Column="0"
                            VerticalAlignment="Center"
-                           Text="Circle Size"/>
+                           Text="Shape Size"/>
                 <Slider VerticalAlignment="Center"
                         Grid.Row="1" Grid.Column="1"
-                        Value="{Binding CircleSize}"
-                        Maximum="{Binding CircleSizeMax}"
-                        ToolTip="{Binding CircleSize}"
+                        Value="{Binding ShapeSize}"
+                        Maximum="{Binding ShapeSizeMax}"
+                        ToolTip="{Binding ShapeSize}"
+                        IsSnapToTickEnabled="True"
                         TickFrequency="1"/>
+                <TextBox Grid.Row="1" Grid.Column="2"
+                         Text="{Binding ShapeSize, UpdateSourceTrigger=PropertyChanged}"
+                         Width="25" 
+                         HorizontalContentAlignment="Center"
+                         HorizontalAlignment="Right"/>
 
                 <TextBlock Grid.Row="2" Grid.Column="0"
                            VerticalAlignment="Center"
-                           Text="Circle Stroke"/>
+                           Text="Shape Stroke"/>
                 <Slider Grid.Row="2" Grid.Column="1"
                         VerticalAlignment="Center"
-                        Value="{Binding CircleStroke}"
-                        Maximum="{Binding CircleStrokeMax}"
-                        ToolTip="{Binding CircleStroke}"
+                        Value="{Binding ShapeStroke}"
+                        Maximum="{Binding ShapeStrokeMax}"
+                        ToolTip="{Binding ShapeStroke}"
                         IsSnapToTickEnabled="True"
                         TickFrequency="1"/>
+                <TextBox Grid.Row="2" Grid.Column="2"
+                         Text="{Binding ShapeStroke, UpdateSourceTrigger=PropertyChanged}"
+                         Width="25" 
+                         HorizontalContentAlignment="Center"
+                         HorizontalAlignment="Right"/>
+
+                <TextBlock Grid.Row="3" Grid.Column="0"
+                           VerticalAlignment="Center"
+                           Text="Shape Opacity"/>
+                <Slider Grid.Row="3" Grid.Column="1"
+                        VerticalAlignment="Center"
+                        Value="{Binding ShapeOpacityPercentage}"
+                        Maximum="{Binding ShapeOpacityMax}"
+                        ToolTip="{Binding ShapeOpacityPercentage}"
+                        IsSnapToTickEnabled="True"
+                        TickFrequency="1"/>
+                <TextBox Grid.Row="3" Grid.Column="2"
+                         Text="{Binding ShapeOpacityPercentage, UpdateSourceTrigger=PropertyChanged}"
+                         Width="25" 
+                         HorizontalContentAlignment="Center"
+                         HorizontalAlignment="Right"/>
             </Grid>
         </materialDesign:Card>
         
