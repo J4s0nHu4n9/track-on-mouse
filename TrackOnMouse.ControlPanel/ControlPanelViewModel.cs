@@ -37,7 +37,7 @@ namespace TrackOnMouse.ControlPanel
 
                 RaisePropertyChanged(nameof(ShapeStrokeMax));
 
-                _highlighter.ShapeSize = (int) _shapeSize;
+                _highlighter.HighlightShapeSize = (int) _shapeSize;
             }
         }
 
@@ -53,7 +53,7 @@ namespace TrackOnMouse.ControlPanel
                 }
                 
                 SetProperty(ref _shapeStroke, value);
-                _highlighter.ShapeStroke = _shapeStroke;
+                _highlighter.HighlightShapeStroke = _shapeStroke;
             }
         }
 
@@ -69,7 +69,7 @@ namespace TrackOnMouse.ControlPanel
                 }
 
                 SetProperty(ref _shapeOpacityPercentage, value);
-                _highlighter.ShapeOpacity = _shapeOpacityPercentage / 100f;
+                _highlighter.HighlightShapeOpacity = _shapeOpacityPercentage / 100f;
             }
         }
 
@@ -83,9 +83,9 @@ namespace TrackOnMouse.ControlPanel
 
             _highlighter = new HighlighterForm
             {
-                ShapeSize = (int) _shapeSize, 
-                ShapeStroke = _shapeStroke,
-                ShapeOpacity = _shapeOpacityPercentage / 100f
+                HighlightShapeSize = (int) _shapeSize, 
+                HighlightShapeStroke = _shapeStroke,
+                HighlightShapeOpacity = _shapeOpacityPercentage / 100f
             };
 
             _highlighter.Show();

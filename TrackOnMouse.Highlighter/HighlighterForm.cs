@@ -4,50 +4,58 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Windows.Forms;
 using TrackOnMouse.Utility;
+using static TrackOnMouse.Utility.WinApi.User32;
+using static TrackOnMouse.Utility.WinApi.Gdi32;
 
 namespace TrackOnMouse.Highlighter
 {
     public sealed partial class HighlighterForm : Form
     {
-        private int _shapeSize;
-        private float _shapeStroke;
+        private readonly MouseHook _mouseHook;
 
-        private Point CurrentMousePosition { get; set; }
+        private int _highlightShapeSize;
+        private float _highlightShapeStroke;
+        private int _clickAnimationTicks;
+
+        private const int ClickAnimationMaxTicks = 25;
+
         private Point WindowCenter => new Point(Width / 2, Height / 2);
 
-        private Size CurrentShapeSize => new Size(ShapeSize, ShapeSize);
+        private Size CurrentHighlightShapeSize => new Size(HighlightShapeSize, HighlightShapeSize);
 
-        public int ShapeSize
+        public int HighlightShapeSize
         {
-            get => _shapeSize;
+            get => _highlightShapeSize;
             set
             {
-                _shapeSize = value;
+                _highlightShapeSize = value;
                 UpdateFormSize();
             }
         }
 
-        public float ShapeStroke
+        public float HighlightShapeStroke
         {
-            get => _shapeStroke;
+            get => _highlightShapeStroke;
             set
             {
-                if (value > _shapeSize)
-                {
-                    _shapeStroke = _shapeSize;
-                }
+                if (value > _highlightShapeSize)
+                    _highlightShapeStroke = _highlightShapeSize;
                 else
-                {
-                    _shapeStroke = value;
-                }
+                    _highlightShapeStroke = value;
 
                 UpdateFormSize();
             }
         }
 
-        public double ShapeOpacity { get; set; } = 0.7;
+        public double HighlightShapeOpacity { get; set; } = 0.7;
 
-        public Color ShapeColor { get; set; } = Color.Yellow;
+        public Color HighlightShapeColor { get; set; } = Color.Yellow;
+
+        public Color RightClickShapeColor { get; set; } = Color.Blue;
+
+        public Color LeftClickShapeColor { get; set; } = Color.Red;
+
+        private bool IsLeftClick { get; set; }
 
         protected override CreateParams CreateParams
         {
@@ -70,9 +78,28 @@ namespace TrackOnMouse.Highlighter
 
             ShowInTaskbar = false;
 
-            Timer highlightTimer = new Timer { Interval = 1 };
+            _mouseHook = MouseHook.GetInstance();
+            _mouseHook.Install();
+            _mouseHook.LeftButtonDown += delegate
+            {
+                _clickAnimationTicks = ClickAnimationMaxTicks;
+                IsLeftClick = true;
+            };
+
+            _mouseHook.RightButtonDown += delegate
+            {
+                _clickAnimationTicks = ClickAnimationMaxTicks;
+                IsLeftClick = false;
+            };
+
+            Timer highlightTimer = new Timer {Interval = 1};
             highlightTimer.Tick += HighlightTimerOnTick;
             highlightTimer.Start();
+        }
+
+        ~HighlighterForm()
+        {
+            _mouseHook.Uninstall();
         }
 
         protected override void OnMove(EventArgs e)
@@ -83,10 +110,9 @@ namespace TrackOnMouse.Highlighter
 
         private void HighlightTimerOnTick(object sender, EventArgs e)
         {
-            CurrentMousePosition = Win32.GetCursorPosition();
-
-            int x = CurrentMousePosition.X - WindowCenter.X;
-            int y = CurrentMousePosition.Y - WindowCenter.Y;
+            Point currentMousePosition = GetCursorPosition();
+            int x = currentMousePosition.X - WindowCenter.X;
+            int y = currentMousePosition.Y - WindowCenter.Y;
             Location = new Point(x, y);
 
             PaintCircle();
@@ -94,7 +120,7 @@ namespace TrackOnMouse.Highlighter
 
         private void UpdateFormSize()
         {
-            Width = Height = (int) (ShapeSize + ShapeStroke) + 5;
+            Width = Height = (int) (HighlightShapeSize + HighlightShapeStroke) + 5;
         }
 
         private void PaintCircle()
@@ -104,35 +130,49 @@ namespace TrackOnMouse.Highlighter
 
             g.SmoothingMode = SmoothingMode.AntiAlias;
             g.DrawEllipse(
-                new Pen(new SolidBrush(Color.FromArgb((int) (byte.MaxValue * ShapeOpacity), ShapeColor)),
-                    ShapeStroke),
+                new Pen(
+                    new SolidBrush(Color.FromArgb((int) (byte.MaxValue * HighlightShapeOpacity), HighlightShapeColor)),
+                    HighlightShapeStroke),
                 new Rectangle(
-                    WindowCenter.X - CurrentShapeSize.Width / 2, WindowCenter.Y - CurrentShapeSize.Height / 2,
-                    CurrentShapeSize.Width, CurrentShapeSize.Height));
+                    WindowCenter.X - CurrentHighlightShapeSize.Width / 2,
+                    WindowCenter.Y - CurrentHighlightShapeSize.Height / 2,
+                    CurrentHighlightShapeSize.Width, CurrentHighlightShapeSize.Height));
 
-
-            IntPtr screenDc = Win32.GetDC(IntPtr.Zero);
-            IntPtr compatibleDc = Win32.CreateCompatibleDC(screenDc);
-            IntPtr hBitmap = bitmap.GetHbitmap(Color.FromArgb(0));
-            IntPtr oldBitmap = Win32.SelectObject(compatibleDc, hBitmap);
-
-            Win32.BLENDFUNCTION blend = new Win32.BLENDFUNCTION
+            if (_clickAnimationTicks > 0)
             {
-                BlendOp = Win32.AC_SRC_OVER,
+                float clickCircleSize = HighlightShapeSize -
+                                        HighlightShapeSize / (float) ClickAnimationMaxTicks * _clickAnimationTicks;
+                g.DrawEllipse(
+                    new Pen(
+                        new SolidBrush(IsLeftClick ? LeftClickShapeColor : RightClickShapeColor), 3),
+                    WindowCenter.X - clickCircleSize / 2,
+                    WindowCenter.Y - clickCircleSize / 2,
+                    clickCircleSize, clickCircleSize);
+
+                _clickAnimationTicks -= 1;
+            }
+
+            IntPtr screenDc = GetDC(IntPtr.Zero);
+            IntPtr compatibleDc = CreateCompatibleDC(screenDc);
+            IntPtr hBitmap = bitmap.GetHbitmap(Color.FromArgb(0));
+            IntPtr oldBitmap = SelectObject(compatibleDc, hBitmap);
+
+            BLENDFUNCTION blend = new BLENDFUNCTION
+            {
+                BlendOp = AC_SRC_OVER,
                 BlendFlags = 0,
                 SourceConstantAlpha = byte.MaxValue,
-                AlphaFormat = Win32.AC_SRC_ALPHA
+                AlphaFormat = AC_SRC_ALPHA
             };
 
             Point location = new Point(Left, Top);
             Size size = new Size(bitmap.Width, bitmap.Height);
             Point pointSource = new Point(0, 0);
-            Win32.UpdateLayeredWindow(Handle, screenDc, ref location, ref size, compatibleDc, ref pointSource, 0,
-                ref blend, Win32.ULW_ALPHA);
-            Win32.SelectObject(compatibleDc, oldBitmap);
-            Win32.DeleteObject(hBitmap);
-            Win32.DeleteDC(compatibleDc);
-            Win32.DeleteDC(screenDc);
+            UpdateLayeredWindow(Handle, screenDc, ref location, ref size, compatibleDc, ref pointSource, 0, ref blend, ULW_ALPHA);
+            SelectObject(compatibleDc, oldBitmap);
+            DeleteObject(hBitmap);
+            DeleteDC(compatibleDc);
+            DeleteDC(screenDc);
         }
     }
 }
